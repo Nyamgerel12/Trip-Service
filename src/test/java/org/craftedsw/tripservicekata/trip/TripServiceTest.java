@@ -3,6 +3,7 @@ package org.craftedsw.tripservicekata.trip;
 import org.craftedsw.tripservicekata.exception.UserNotLoggedInException;
 import org.craftedsw.tripservicekata.user.User;
 import org.junit.Test;
+import org.junit.jupiter.api.TestClassOrder;
 import org.junit.Assert;
 
 import java.util.List;
@@ -14,6 +15,8 @@ public class TripServiceTest {
     private static final User UNUSED_USER = null;
     private static final User REGISTERED_USER = new User();
     private static final User ANOTHER_USER = new User();
+    private static final Trip TO_BRAZIL = new Trip();
+    private static final Trip TO_LONDON = new Trip();
 
     @Test(expected = UserNotLoggedInException.class)
     public void should_throw_exception_when_user_is_not_logged_in() {
@@ -32,6 +35,22 @@ public class TripServiceTest {
         List<Trip> trips = tripService.getTripsByUser(otherUser);
 
         Assert.assertTrue(trips.isEmpty());
+    }
+    @Test
+    public void should_return_trips_when_users_are_friends() {
+        List<Trip> expectedTrips = new ArrayList<Trip>();
+        expectedTrips.add(TO_BRAZIL);
+        expectedTrips.add(TO_LONDON);
+
+        TripService tripService = new TestableTripService(REGISTERED_USER, expectedTrips);
+
+        User friendUser = new User();
+        friendUser.addFriend(ANOTHER_USER);
+        friendUser.addFriend(REGISTERED_USER);
+
+        List<Trip> trips = tripService.getTripsByUser(friendUser);
+
+        Assert.assertEquals(2, trips.size());
     }
 
     private static class TestableTripService extends TripService {
