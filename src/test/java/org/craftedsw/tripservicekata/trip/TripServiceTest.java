@@ -52,6 +52,14 @@ public class TripServiceTest {
 
         Assert.assertEquals(2, trips.size());
     }
+    @Test
+    public void should_return_trips_when_user_is_viewing_own_trips() {
+        List<Trip> myTrips = new ArrayList<Trip>();
+        myTrips.add(TO_BRAZIL);
+        TripService tripService = new TestableTripService(REGISTERED_USER, myTrips);
+        List<Trip> trips = tripService.getTripsByUser(REGISTERED_USER);
+        Assert.assertEquals(1, trips.size());
+    }
 
     private static class TestableTripService extends TripService {
         private final User loggedInUser;
